@@ -48,6 +48,14 @@ char mptt_location[16];
 // keep log of where we are
 uint8_t currentRegistryNumber = 0;
 
+// tracer requires no handshaking
+void preTransmission() {
+  digitalWrite(LED_BUILTIN, HIGH);    // turn the LED off by making the voltage LOW
+}
+void postTransmission() {
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+}
+
 void setup() {
   delay(3000);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -78,34 +86,6 @@ void reconnect() {
       delay(5000);
     }
   }
-}
-
-// tracer requires no handshaking
-void preTransmission() {
-  digitalWrite(LED_BUILTIN, HIGH);    // turn the LED off by making the voltage LOW
-}
-void postTransmission() {
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-}
-
-void doRegistryNumber() {
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  switch(currentRegistryNumber) {
-    case 0: 
-      AddressRegistry_9000();
-      client.publish("EPSolar/1/loop1", "9000");
-      break;
-    case 1: 
-      AddressRegistry_3100();
-      client.publish("EPSolar/1/loop1", "3100");
-      break;
-    case 2:
-      AddressRegistry_311A();
-      client.publish("EPSolar/1/loop1", "311A");
-      break;
-    default: currentRegistryNumber = 0;
-  }
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
 }
 
 void AddressRegistry_3100() {
@@ -226,6 +206,26 @@ void AddressRegistry_9000() {
   }else{
     client.publish("EPSolar/1/9000", "false");
   }
+}
+
+void doRegistryNumber() {
+  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  switch(currentRegistryNumber) {
+    case 0: 
+      AddressRegistry_9000();
+      client.publish("EPSolar/1/loop1", "9000");
+      break;
+    case 1: 
+      AddressRegistry_3100();
+      client.publish("EPSolar/1/loop1", "3100");
+      break;
+    case 2:
+      AddressRegistry_311A();
+      client.publish("EPSolar/1/loop1", "311A");
+      break;
+    default: currentRegistryNumber = 0;
+  }
+  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
 }
 
 void loop() {
